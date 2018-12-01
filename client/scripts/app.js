@@ -1,3 +1,5 @@
+var $ = require('jquery');
+
 var App = {
   $spinner: $('.spinner img'),
 

@@ -1,3 +1,6 @@
+var $ = require('jquery');
+var _ = require('underscore');
+
 var Rooms = {
 
   add: function () {

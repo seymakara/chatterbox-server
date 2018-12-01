@@ -2,6 +2,15 @@
 var http = require('http');
 var _ = require('underscore');
 var handleRequest = require('./request-handler.js');
+var $ = require('jquery');
+// var app = require('../client/scripts/app.js');
+// var formView = require('../client/scripts/formView.js');
+// var friends = require('../client/scripts/friends.js');
+// var messages = require('../client/scripts/messages.js');
+// var messagesView = require('../client/scripts/messagesView.js')
+// var messageView = require('../client/scripts/messageView.js')
+// var rooms = require('../client/scripts/rooms.js');
+// var roomsView = require('../client/scripts/roomsView.js');
 
 
 // Every server needs to listen on a port with a unique number. The
@@ -18,16 +27,18 @@ var ip = '127.0.0.1';
 
 
 
+
 // We use node's http module to create a server.
 //
 // The function we pass to http.createServer will be used to handle all
 // incoming requests.
 //
 // After creating the server, we will tell it to listen on the given port and IP. */
-var server = http.createServer(handleRequest);
+var server = http.createServer(handleRequest.requestHandler);
 console.log('Listening on http://' + ip + ':' + port);
 server.listen(port, ip);
 
+// handleRequest.requestHandler(http.request(server, {}));
 // To start this server, run:
 //
 //   node basic-server.js
