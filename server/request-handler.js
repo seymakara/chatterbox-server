@@ -20,10 +20,8 @@ var defaultCorsHeaders = {
   'access-control-allow-headers': 'content-type, accept',
   'access-control-max-age': 10 // Seconds.
 };
-
-
+var data = { results: [] };
 var requestHandler = function (request, response) {
-  var data = { results: [] };
   // Request and Response come from node's http module.
   //
   // They include information about both the incoming request, such as
@@ -39,7 +37,6 @@ var requestHandler = function (request, response) {
   // debugging help, but you should always be careful about leaving stray
   // console.logs in your code.
   console.log('Serving request type ' + request.method + ' for url ' + request.url);
-
   // The outgoing status.
   var statusCode = 200;
 
@@ -52,21 +49,26 @@ var requestHandler = function (request, response) {
   headers['Content-Type'] = 'application/json';
   // .writeHead() writes to the request line and headers of the response,
   // which includes the status and all headers.
-  if (request.url !== '/classes/messages') {
-    response.writeHead(404, headers);
-    response.end();
-  } else {
-    if (request.method === 'GET') { //request.on('data',cb)
-      response.writeHead(statusCode, headers);
-      //make callback to push results into data.results;
+  if (request.url === '/classes/messages') {
+    if (request.method === 'GET') {
+      console.log('data results:', data.results);
+      response.writeHead(200, headers);
       response.end(JSON.stringify(data));
     }
     if (request.method === 'POST') {
-      statusCode = 201;
-      response.writeHead(statusCode, headers);
-      response.end(JSON.stringify());
-      // request.end();
+      let body = '';
+      request.on('data', chunk => {
+        body += chunk.toString();
+      });
+      request.on('end', () => {
+        data.results.push(JSON.parse(body));
+        response.writeHead(201, headers);
+        response.end(body);
+      });
     }
+  } else {
+    response.writeHead(404, headers);
+    response.end();
   }
   // Make sure to always call response.end() - Node may not send
   // anything back to the client until you do. The string you pass to
@@ -88,6 +90,5 @@ var requestHandler = function (request, response) {
 // Another way to get around this restriction is to serve you chat
 // client from this domain by setting up static file serving.
 
-module.exports.defaultCorsHeaders = defaultCorsHeaders;
 module.exports.requestHandler = requestHandler;
 
