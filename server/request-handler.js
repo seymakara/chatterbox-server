@@ -14,6 +14,7 @@ this file and include it in basic-server.js so that it actually works.
 *Hint* Check out the node module documentation at http://nodejs.org/api/modules.html.
 
 **************************************************************/
+
 var defaultCorsHeaders = {
   'access-control-allow-origin': '*',
   'access-control-allow-methods': 'GET, POST, PUT, DELETE, OPTIONS',
@@ -21,6 +22,13 @@ var defaultCorsHeaders = {
   'access-control-max-age': 10 // Seconds.
 };
 var data = { results: [] };
+
+var mess2 = {
+  username: 'hello',
+  roomname: 'jack',
+  text: 'no'
+};
+data.results.push(mess2);
 var requestHandler = function (request, response) {
   // Request and Response come from node's http module.
   //
@@ -51,7 +59,7 @@ var requestHandler = function (request, response) {
   // which includes the status and all headers.
   if (request.url === '/classes/messages') {
     if (request.method === 'GET') {
-      console.log('data results:', data.results);
+      console.log('data', data);
       response.writeHead(200, headers);
       response.end(JSON.stringify(data));
     }
@@ -63,12 +71,16 @@ var requestHandler = function (request, response) {
       request.on('end', () => {
         data.results.push(JSON.parse(body));
         response.writeHead(201, headers);
-        response.end(body);
+        response.end(JSON.stringify(body));
       });
+    }
+    if (request.method === 'OPTIONS') {
+      response.writeHead(200, headers);
+      response.end();
     }
   } else {
     response.writeHead(404, headers);
-    response.end();
+    response.end('dd');
   }
   // Make sure to always call response.end() - Node may not send
   // anything back to the client until you do. The string you pass to

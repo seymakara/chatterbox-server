@@ -1,27 +1,24 @@
 var Friends = {
 
 
-  friendsList: [],
+  _data: new Set,
 
-  toggleStatus: function (username) {
-    if (this.allUsers[username] === true) {
-      this.allUsers[username] = false;
-
-
-    } else if (this.allUsers[username] === false) {
-      this.allUsers[username] = true;
-      this.friendsList.push(username);
-    } else {
-      return 'user not found.';
-    }
-
-    console.log(this.allUsers);
-
+  items: function() {
+    return _.chain([...Friends._data]);
   },
 
-  allUsers: {
-    //will be populated with list of user keys with true:false keys
+  isFriend: function(name) {
+    return Friends._data.has(name);
+  },
+
+  toggleStatus: function(name, callback = ()=>{}) {
+    if (Friends._data.has(name)) {
+      Friends._data.delete(name);
+      callback(false);
+    } else {
+      Friends._data.add(name);
+      callback(true);
+    }
   }
-
+  
 };
-

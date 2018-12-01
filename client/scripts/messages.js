@@ -1,106 +1,36 @@
 var Messages = {
 
 
+  _data: {},
 
-  storage: null,
-
-  ////////////////////////////////////
-  // Sanitization functions
-  ////////////////////////////////////
-  sanitizeMsg: function (chat) {
-    var message = chat.text;
-    if (message === undefined) {
-      return 'undefined';
-    } else if (message === null) {
-      return 'null';
-    }
-    var arr = message.split('');
-    var sanitized = [];
-
-    arr.forEach(function (letter) {
-      if (letter === '<') {
-        sanitized.push('&lt; nice try');
-      } else if (letter === '>') {
-        sanitized.push('&gt; nice try');
-      } else if (letter === '&') {
-        sanitized.push('&amp; nice try');
-      } else if (letter === '/') {
-        sanitized.push('&#x2F; nice try');
-      } else if (letter === '(') {
-        sanitized.push('parens nice try');
-      } else if (letter === '{') {
-        sanitized.push('brace nice try');
-      } else if (letter === '$') {
-        sanitized.push('bling nice try');
-      } else {
-        sanitized.push(letter);
-      }
-    });
-
-    return sanitized.join('');
+  items: function() {
+    return _.chain(Object.values(Messages._data)).sortBy('createdAt');
   },
-  sanitizeUsr: function (chat) {
-    var user = chat.username;
-    if (user === undefined) {
-      return 'undefined';
-    } else if (user === null) {
-      return 'null';
-    }
-    var arr = user.split('');
-    var sanitized = [];
 
-    arr.forEach(function (letter) {
-      if (letter === '<') {
-        sanitized.push('&lt; nice try');
-      } else if (letter === '>') {
-        sanitized.push('&gt; nice try');
-      } else if (letter === '&') {
-        sanitized.push('&amp; nice try');
-      } else if (letter === '/') {
-        sanitized.push('&#x2F; nice try');
-      } else if (letter === '(') {
-        sanitized.push('parens nice try');
-      } else if (letter === '{') {
-        sanitized.push('brace nice try');
-      } else if (letter === '$') {
-        sanitized.push('bling nice try');
-      } else {
-        sanitized.push(letter);
-      }
-    });
-
-    return sanitized.join('');
+  add: function(message, callback = ()=>{}) {
+    Messages._data[message.objectId] = message;
+    callback(Messages.items());
   },
-  sanitizeRoom: function (chat) {
-    var room = chat.roomname;
-    if (room === undefined) {
-      return 'undefined';
-    } else if (room === null) {
-      return 'null';
+
+  update: function(messages, callback = ()=>{}) {
+    var length = Object.keys(Messages._data).length;
+
+    for (let message of messages) {
+      Messages._data[message.objectId] = Messages._conform(message);
     }
-    var arr = room.split('');
-    var sanitized = [];
 
-    arr.forEach(function (letter) {
-      if (letter === '<') {
-        sanitized.push('&lt; nice try');
-      } else if (letter === '>') {
-        sanitized.push('&gt; nice try');
-      } else if (letter === '&') {
-        sanitized.push('&amp; nice try');
-      } else if (letter === '/') {
-        sanitized.push('&#x2F; nice try');
-      } else if (letter === '(') {
-        sanitized.push('parens nice try');
-      } else if (letter === '{') {
-        sanitized.push('brace nice try');
-      } else if (letter === '$') {
-        sanitized.push('bling nice try');
-      } else {
-        sanitized.push(letter);
-      }
-    });
+    // only invoke the callback if something changed
+    if (Object.keys(Messages._data).length !== length) {
+      callback(Messages.items());
+    }
+  },
 
-    return sanitized.join('');
+  _conform: function(message) {
+    // ensure each message object conforms to expected shape
+    message.text = message.text || '';
+    message.username = message.username || '';
+    message.roomname = message.roomname || '';
+    return message;
   }
+  
 };

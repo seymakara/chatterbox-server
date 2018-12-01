@@ -1,29 +1,32 @@
 var MessagesView = {
+
   $chats: $('#chats'),
 
   initialize: function () {
-    Messages.storage.forEach(function (post) {
-      MessagesView.renderMessage(post);
-      $('.username').on("click", 'a', function (event) {
-        event.stopPropagation();
-        event.stopImmediatePropagation();
-        var user = this.id;
-        console.log(user);
-        Friends.toggleStatus(user);
-      });
-    });
 
+    MessagesView.$chats.on('click', '.username', MessagesView.handleClick);
   },
 
-  renderMessage: function (allChats) {
-    // debugger;
-    var message = Messages.sanitizeMsg(allChats);
-    var username = Messages.sanitizeUsr(allChats);
-    var date = allChats.createdAt;
-    var post = message + username + date;
+  render: function () {
 
-    Friends.allUsers[username] = false;
+    MessagesView.$chats.html('');
+    Messages
+      .items()
+      .filter(message => Rooms.isSelected(message.roomname))
+      .each(message => MessagesView.renderMessage(message));
+  },
 
-    this.$chats.append(`<div class='chat'><div class='username'><a id=${username} ><div>${username}</div></a></div><div class='message'><p>${message}</p></div><div class='created-at'><p>${date}</p></div></div>`);
+  renderMessage: function (message) {
+    var $message = MessageView.render(message);
+    MessagesView.$chats.prepend($message);
+  },
+
+  handleClick: function (event) {
+    // Get username from data attribute
+    var username = $(event.target).data('username');
+    if (username === undefined) { return; }
+
+    Friends.toggleStatus(username, MessagesView.render);
   }
+
 };

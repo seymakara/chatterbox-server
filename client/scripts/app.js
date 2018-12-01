@@ -1,4 +1,5 @@
 var App = {
+
   $spinner: $('.spinner img'),
 
   username: 'anonymous',
@@ -7,26 +8,27 @@ var App = {
     App.username = window.location.search.substr(10);
 
     FormView.initialize();
-
-    setTimeout(MessagesView.initialize, 400);
-    setTimeout(RoomsView.initialize, 400);
+    RoomsView.initialize();
+    MessagesView.initialize();
 
     // Fetch initial batch of messages
     App.startSpinner();
     App.fetch(App.stopSpinner);
 
-    // $('#chats').find('a').on('click', function () {
-    //   console.log('ughhhh')
-    //   alert('it works!')
-    // })
+
+    // Poll for new messages every 3 sec
+    // setInterval(App.fetch, 3000);
   },
 
   fetch: function (callback = () => { }) {
-    Parse.readAll(data => {
-      // examine the response from the server request:
-      // console.log(data['results'][0]);
-      Messages.storage = data['results'];
-      console.log(Messages.storage);
+    Parse.readAll((data) => {
+
+      // Don't bother to update if we have no messages
+      if (!data.results || !data.results.length) { return; }
+
+      Rooms.update(data.results, RoomsView.render);
+      Messages.update(data.results, MessagesView.render);
+
       callback();
     });
   },
@@ -39,6 +41,5 @@ var App = {
   stopSpinner: function () {
     App.$spinner.fadeOut('fast');
     FormView.setStatus(false);
-  },
-
+  }
 };

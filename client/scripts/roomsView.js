@@ -1,27 +1,41 @@
 var RoomsView = {
+
   $button: $('#rooms button'),
   $select: $('#rooms select'),
 
   initialize: function () {
-    var allRooms = [];
-    Messages.storage.forEach(function (post) {
-      allRooms.push(Messages.sanitizeRoom(post));
-    });
-    var uniqRooms = _.uniq(allRooms);
-    uniqRooms.forEach(function (roomname) {
-      RoomsView.renderRoom(roomname);
-    });
+
+    RoomsView.$select.on('change', RoomsView.handleChange);
+    RoomsView.$button.on('click', RoomsView.handleClick);
+  },
+
+  render: function () {
+
+    RoomsView.$select.html('');
+    Rooms
+      .items()
+      .each(RoomsView.renderRoom);
+    RoomsView.$select.val(Rooms.selected);
   },
 
   renderRoom: function (roomname) {
-    // var sanitized = Messages.sanitizeRoom(post);
-
-    $('#rooms select').append(
-      `<option value='${roomname}'>${roomname}</option>`
-    );
+    var $option = $('<option>').val(roomname).text(roomname);
+    RoomsView.$select.append($option);
   },
-};
 
-RoomsView.$button.on('click', function () {
-  Rooms.add();
-});
+  handleChange: function (event) {
+    Rooms.selected = RoomsView.$select.val();
+    MessagesView.render();
+  },
+
+  handleClick: function (event) {
+    var roomname = prompt('Enter room name');
+    if (roomname) {
+      Rooms.add(roomname, () => {
+        RoomsView.render();
+        MessagesView.render();
+      });
+    }
+  }
+
+};
