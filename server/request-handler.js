@@ -40,15 +40,6 @@ var requestHandler = function (request, response) {
   // console.logs in your code.
   console.log('Serving request type ' + request.method + ' for url ' + request.url);
 
-  // options = {
-  //   url: '/arglebargle',
-  //   method: 'GET',
-  //   _postData: undefined,
-  //   setEncoding: [Function],
-  //   on: [Function: bound],
-  //   addListener: [Function: bound]
-  // }
-
   // The outgoing status.
   var statusCode = 200;
 
@@ -56,7 +47,6 @@ var requestHandler = function (request, response) {
   var headers = defaultCorsHeaders;
 
   // Tell the client we are sending them plain text.
-  //
   // You will need to change this if you are sending something
   // other than plain text, like JSON or HTML.
   headers['Content-Type'] = 'application/json';
@@ -65,28 +55,19 @@ var requestHandler = function (request, response) {
   if (request.url !== '/classes/messages') {
     response.writeHead(404, headers);
     response.end();
-    return;
   } else {
     if (request.method === 'GET') { //request.on('data',cb)
       response.writeHead(statusCode, headers);
       //make callback to push results into data.results;
       response.end(JSON.stringify(data));
-      console.log(data.results);
-      return;
     }
     if (request.method === 'POST') {
       statusCode = 201;
       response.writeHead(statusCode, headers);
-      // http.request('http://127.0.0.1:3000/' + request.url).write(request._postData);
-      response.end();
+      response.end(JSON.stringify());
       // request.end();
-      return;
     }
   }
-  response.writeHead(404, headers);
-  response.end();
-
-
   // Make sure to always call response.end() - Node may not send
   // anything back to the client until you do. The string you pass to
   // response.end() will be the body of the response - i.e. what shows
