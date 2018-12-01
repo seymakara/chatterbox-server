@@ -23,12 +23,6 @@ var defaultCorsHeaders = {
 };
 var data = { results: [] };
 
-var mess2 = {
-  username: 'hello',
-  roomname: 'jack',
-  text: 'no'
-};
-data.results.push(mess2);
 var requestHandler = function (request, response) {
   // Request and Response come from node's http module.
   //
@@ -57,9 +51,8 @@ var requestHandler = function (request, response) {
   headers['Content-Type'] = 'application/json';
   // .writeHead() writes to the request line and headers of the response,
   // which includes the status and all headers.
-  if (request.url === '/classes/messages') {
+  if (request.url.includes('/classes/messages')) {
     if (request.method === 'GET') {
-      console.log('data', data);
       response.writeHead(200, headers);
       response.end(JSON.stringify(data));
     }
@@ -80,7 +73,7 @@ var requestHandler = function (request, response) {
     }
   } else {
     response.writeHead(404, headers);
-    response.end('dd');
+    response.end();
   }
   // Make sure to always call response.end() - Node may not send
   // anything back to the client until you do. The string you pass to
