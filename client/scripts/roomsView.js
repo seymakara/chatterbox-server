@@ -1,6 +1,3 @@
-var $ = require('jquery');
-var _ = require('underscore');
-
 var RoomsView = {
   $button: $('#rooms button'),
   $select: $('#rooms select'),
