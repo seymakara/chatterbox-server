@@ -106,6 +106,42 @@ describe('Node Server Request Listener Function', function () {
     expect(res._ended).to.equal(true);
   });
 
+  it('messages should have unique objectId properties', function () {
+    var stubMsg1 = {
+      username: 'Jono',
+      text: 'Do my bidding!',
+      roomname: 'lobby',
+      objectId: 2
+    };
+    var stubMsg2 = {
+      username: 'Jono',
+      text: 'Do my bidding!',
+      roomname: 'lobby',
+      objectId: 1
+    };
+    var req1 = new stubs.request('/classes/messages', 'POST', stubMsg1);
+    var res1 = new stubs.response();
+
+    handler.requestHandler(req1, res1);
+
+    // Now if we request the log for that room the message we posted should be there:
+
+    var req2 = new stubs.request('/classes/messages', 'POST', stubMsg2);
+    var res2 = new stubs.response();
+
+    handler.requestHandler(req2, res2);
+
+    // Now if we request the log for that room the message we posted should be there:
+    req2 = new stubs.request('/classes/messages', 'GET');
+    res2 = new stubs.response();
+
+    handler.requestHandler(req2, res2);
+
+    var messages = JSON.parse(res2._data);
+    expect(messages.results[3].objectId).to.not.equal(messages.results[4].objectId);
+    expect(res2._ended).to.equal(true);
+  });
+
   it('Should send back an object', function () {
     var req = new stubs.request('/classes/messages', 'GET');
     var res = new stubs.response();
