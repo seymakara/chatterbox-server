@@ -17,7 +17,7 @@ var App = {
 
 
     // Poll for new messages every 3 sec
-    // setInterval(App.fetch, 3000);
+    setInterval(App.fetch, 3000);
   },
 
   fetch: function (callback = () => { }) {
@@ -35,11 +35,11 @@ var App = {
 
   startSpinner: function () {
     App.$spinner.show();
-    FormView.setStatus(true);
+    //FormView.setStatus(true);
   },
 
   stopSpinner: function () {
     App.$spinner.fadeOut('fast');
-    FormView.setStatus(false);
+    //FormView.setStatus(false);
   }
 };
