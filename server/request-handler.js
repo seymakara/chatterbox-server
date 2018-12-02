@@ -18,7 +18,6 @@ var requestHandler = function (request, response) {
     if (request.method === 'GET') {
       response.writeHead(200, headers);
       response.end(JSON.stringify(data));
-      console.log('GET', data.results);
     }
     if (request.method === 'POST') {
       let body = '';
@@ -27,13 +26,11 @@ var requestHandler = function (request, response) {
       });
       request.on('end', () => {
         data.results.push(JSON.parse(body));
-        console.log('POST', data.results);
         response.writeHead(201, headers);
         response.end(JSON.stringify(data));
       });
     }
     if (request.method === 'OPTIONS') {
-      console.log('OPTIONS', data.results);
       response.writeHead(200, headers);
       response.end();
     }
